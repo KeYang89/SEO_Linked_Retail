@@ -1,0 +1,52 @@
+
+<?php 
+$_helper = $this->helper('catalog/output');
+$_product = $this->getProduct();
+$currency = Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol();
+if($_product):
+?>
+<!-- twitter product cards -->
+<meta name="twitter:card" content="product" />
+<meta name="twitter:domain" content="<?php echo Mage::getBaseUrl() ?>" />
+<meta name="twitter:site" content="@<?php echo Mage::getStoreConfig('SOCIALSEO/social/twittersite') ?>" />
+<meta name="twitter:creator" content="@<?php echo Mage::getStoreConfig('SOCIALSEO/social/twittercreator') ?>" />
+<meta name="twitter:title" content="<?php echo $_product->getName() ?>" />
+<meta name="twitter:description" content="<?php echo strip_tags (htmlspecialchars($_helper->productAttribute($_product, nl2br($_product->getShortDescription()), 'short_description'))) ?>" />
+<meta name="twitter:image" content="<?php echo $_product->getImageUrl() ?>" />
+<meta name="twitter:description" content="<?php echo strip_tags ($_helper->productAttribute($_product, nl2br($_product->getShortDescription()), 'short_description')) ?>" />
+<meta name="twitter:image" content="<?php echo Mage::getModel('catalog/product_media_config')->getMediaUrl($_product->getImage()) ?>" />
+<meta name="twitter:data1" content="<?php echo $currency.Mage::helper('tax')->getPrice($_product, $_product->getFinalPrice(), true); ?>" />
+<meta name="twitter:label1" content="PRICE" />
+<meta name="twitter:data2" content="<?php echo Mage::getStoreConfig('shipping/origin/country_id') ?>" />
+<meta name="twitter:label2" content="LOCATION" />
+<!-- open graph for facebook / other networks -->
+<?php endif; ?>
+<?php if(Mage::registry('current_product')): ?>
+ <?php $product = Mage::registry('current_product'); ?>
+ <meta property="og:title" content="<?php echo ($product->getName()); ?>" />
+ <meta property="og:type" content="product" />
+ <meta property="og:image" content="<?php echo $this->helper('catalog/image')->init($product, 'small_image')->resize(200,200);?>" />
+ <meta property="og:url" content="<?php echo Mage::registry('product')->getProductUrl(); ?>" />
+ <meta property="og:description" content="<?php echo strip_tags(($product->getShortDescription())); ?>" />
+ <meta property="og:site_name" content="<?php echo Mage::app()->getStore()->getName(); ?>" />
+<?php elseif(Mage::registry('current_category')): ?>
+ <meta property="og:title" content="<?php echo $this->getTitle() ?>" />
+ <meta property="og:type" content="product.group" />
+ <meta property="og:url" content="<?php echo $this->helper('core/url')->getCurrentUrl();?>" />
+ <meta property="og:description" content="<?php echo strip_tags($this->getDescription()) ?>" />
+ <meta property="og:site_name" content="<?php echo Mage::app()->getStore()->getName(); ?>" />
+<?php elseif((Mage::getSingleton('cms/page')->getIdentifier() == 'home' &&
+ Mage::app()->getFrontController()->getRequest()->getRouteName() == 'cms')) : ?>
+ <meta property="og:title" content="<?php echo $this->getTitle() ?>" />
+ <meta property="og:type" content="website" />
+ <meta property="og:url" content="<?php echo $this->helper('core/url')->getCurrentUrl();?>" />
+ <meta property="og:description" content="<?php echo strip_tags($this->getDescription()) ?>" />
+ <meta property="og:site_name" content="<?php echo Mage::app()->getStore()->getName(); ?>" />
+<?php else: ?>
+ <meta property="og:title" content="<?php echo $this->getTitle() ?>" />
+ <meta property="og:type" content="article" />
+ <meta property="og:url" content="<?php echo $this->helper('core/url')->getCurrentUrl();?>" />
+ <meta property="og:description" content="<?php echo strip_tags($this->getDescription()) ?>" />
+ <meta property="og:site_name" content="<?php echo Mage::app()->getStore()->getName(); ?>" />
+<?php endif; ?>
+<?php /* Open Graph Protocol for Facebook and SEO END */ ?>
